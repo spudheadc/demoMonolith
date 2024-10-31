@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Thymeleaf: Javascript function call</title>
+</head>
+
+<body>
+    <header>
+        <div> DemoMonolith: List of countries </div>
+    </header>
+    <main>
+        <section class="flex-box">
+            <ul th:each="country: ${countries}">
+                <li th:text="${country.name}"/>
+            </ul>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,67 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.5'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id "org.openapi.generator" version "7.8.0"
+}
+
+group = 'au.id.wattle.chapman.strangler'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+sourceSets {
+   main {
+      java {
+         srcDir "${buildDir}/generated/sources/openapigenerator/src/main/java"
+      }
+   }
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+openApiGenerate {
+    generatorName.set("java")
+    inputSpec.set("$rootDir/src/main/api/demoMonolith/countries.yaml")
+    outputDir.set("$buildDir/generated/sources/openapigenerator")
+    apiPackage.set("au.id.wattle.chapman.strangler.demoMonolith.apis")
+    modelPackage.set("au.id.wattle.chapman.strangler.demoMonolith.models")
+    configOptions.put("dateLibrary", "java8")
+    configOptions.put("library", "restclient")
+    configOptions.put("openApiNullable", "false")
+    configOptions.put("useBeanValidation", "false")
+    configOptions.put("documentationProvider", "none")
+	
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+	implementation 'org.mapstruct:mapstruct:1.6.0'
+	compileOnly 'org.projectlombok:lombok'
+	compileOnly 'org.mapstruct:mapstruct-processor:1.6.0'
+	runtimeOnly 'com.h2database:h2'
+	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.0'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+
+tasks.named("compileJava").configure {
+    dependsOn("openApiGenerate")
+}
